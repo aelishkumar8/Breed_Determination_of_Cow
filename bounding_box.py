@@ -1,16 +1,26 @@
 import os
 import numpy as np
 import cv2
+import pandas as pd
 from glob import glob
 from tqdm import tqdm
 from skimage.measure import label, regionprops, find_contours
 
+length = []
+width = []
+Class = []
+
 """ Creating a directory """
+
+
 def create_dir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 """ Convert a mask to border image """
+
+
 def mask_to_border(mask):
     h, w = mask.shape
     border = np.zeros((h, w))
@@ -23,10 +33,12 @@ def mask_to_border(mask):
 
     return border
 
+
 """ Mask to bounding boxes """
+
+
 def mask_to_bbox(mask):
     bboxes = []
-
     mask = mask_to_border(mask)
     lbl = label(mask)
     props = regionprops(lbl)
@@ -36,17 +48,18 @@ def mask_to_bbox(mask):
 
         x2 = prop.bbox[3]
         y2 = prop.bbox[2]
-
         bboxes.append([x1, y1, x2, y2])
-        length = ((y2 - y1)**2 + (x2 - x1)**2)**0.5
-        print(f"Height : {length}")
-
+        length.append(y2 - y1)
+        width.append(x2 - x1)
+        Class.append(1)
     return bboxes
+
 
 def parse_mask(mask):
     mask = np.expand_dims(mask, axis=-1)
     mask = np.concatenate([mask, mask, mask], axis=-1)
     return mask
+
 
 if __name__ == "__main__":
     """ Load the dataset """
@@ -75,3 +88,7 @@ if __name__ == "__main__":
         """ Saving the image """
         # cat_image = np.concatenate([x, parse_mask(y)], axis=1)
         cv2.imwrite(f"results/{name}.png", x)
+
+    dict = {'Height': length, 'Width': width, 'Class':Class}
+    df = pd.DataFrame(dict)
+    df.to_csv('File.csv', index=False)

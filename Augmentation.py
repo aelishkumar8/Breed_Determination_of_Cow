@@ -16,18 +16,14 @@ def create_dir(path):
 
 
 def load_data(path, split= 0.5):
+    """ Loading the images and masks """
     X = sorted(glob(os.path.join(path, "images", "*.jpg")))
     Y = sorted(glob(os.path.join(path, "masks", "*.png")))
-    # for x,y in zip(X,Y):
-    #     print(x,y)
-    #     x = cv.imread(x)
-    #     cv.imwrite("x.png", x)
-    #     y = cv.imread(y)
-    #     cv.imwrite("y.png", y)
-    #     break
+
+    """ Spliting the data into training and testing """
     split_size = int(len(X) * split)
-    train_x, test_x = train_test_split(X, test_size=split_size, random_state=1)
-    train_y, test_y = train_test_split(Y, test_size=split_size, random_state=1)
+    train_x, test_x = train_test_split(X, test_size=split_size, random_state=42)
+    train_y, test_y = train_test_split(Y, test_size=split_size, random_state=42)
     return (train_x, train_y), (test_x, test_y)
 
 
@@ -65,12 +61,12 @@ def augment_data(images, masks, save_path, augment= True):
             Y = [y]
         index = 0
         for i, m in zip(X,Y):
-            i = imutils.resize(i, height=750)
-            m = imutils.resize(m, height=750)
+            i = cv2.resize(i, (512,512))
+            m = cv2.resize(m, (512,512))
             temp_image_name = f"{name}_{index}.png"
             temp_mask_name = f"{name}_{index}.png"
             image_path = os.path.join(save_path, "images", temp_image_name)
-            mask_path =  os.path.join(save_path, "masks", temp_image_name)
+            mask_path =  os.path.join(save_path, "masks", temp_mask_name)
             cv2.imwrite(image_path, i)
             cv2.imwrite(mask_path, m)
             index +=1
@@ -93,26 +89,3 @@ if __name__ == "__main__":
     augment_data(test_x, test_y, "new_data/test/", augment=False)
     images = sorted(glob(os.path.join("new_data/train", "images", "*")))
     masks = sorted(glob(os.path.join("new_data/train", "masks", "*")))
-
-    """ Create folder to save images """
-    create_dir("results")
-
-    """ Loop over the dataset """
-    for x, y in tqdm(zip(images, masks), total=len(images)):
-        """ Extract the name """
-        name = x.split("/")[-1].split("\\")[-1].split(".")[0]
-
-        """ Read image and mask """
-        x = cv2.imread(x, cv2.IMREAD_COLOR)
-        y = cv2.imread(y, cv2.IMREAD_GRAYSCALE)
-
-        """ Detecting bounding boxes """
-        bboxes = mask_to_bbox(y)
-
-        """ marking bounding box on image """
-        for bbox in bboxes:
-            x = cv2.rectangle(x, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 0, 255), 2)
-
-        """ Saving the image """
-        # cat_image = np.concatenate([x, parse_mask(y)], axis=1)
-        cv2.imwrite(f"results/{name}.png", x)

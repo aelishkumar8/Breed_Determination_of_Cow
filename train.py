@@ -9,7 +9,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau, EarlyStopping, TensorBoard
 from keras.optimizers import Adam
-from keras.metrics import Recall, Precision
+from keras.metrics import Recall, Precision,AUC
 from model import Deeplab_segmentation
 from metrics import dice_loss, dice_coef, iou
 
@@ -21,12 +21,12 @@ def create_dir(path):
         os.makedirs(path)
 
 def load_data(path):
-    x = glob(os.path.join(path,"images", "*jpg"))
+    x = glob(os.path.join(path,"images", "*png"))
     y = glob(os.path.join(path, "masks", "*png"))
     return x,y
 
 def shuffling(x,y):
-    x,y = shuffle(x,y, random_state = 35)
+    x,y = shuffle(x,y, random_state = 42)
     return x,y
 
 def read_image(path):
@@ -70,13 +70,12 @@ if __name__ == "__main__":
 
     batch_size = 2
     lr = 1e-4
-    num_epochs = 50
+    num_epochs = 10
     model_path = os.path.join("files", "model.h5")
     csv_path = os.path.join("files", "data.csv")
     dataset_path = "new_data"
     train_path = os.path.join(dataset_path, "train")
     valid_path = os.path.join(dataset_path, "test")
-
     train_x, train_y = load_data(train_path)
     train_x, valid_y = shuffling(train_x, train_y)
     valid_x, valid_y = load_data(valid_path)
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     train_dataset = tf_dataset(train_x, train_y, batch=batch_size)
     valid_dataset = tf_dataset(valid_x, valid_y, batch=batch_size)
     model = Deeplab_segmentation((H, W, 3))
-    model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=[dice_coef, iou, Recall(), Precision()])
+    model.compile(loss= dice_loss, optimizer=Adam(lr), metrics=[dice_coef, iou, Recall(), Precision(),AUC()])
     callbacks = [
         ModelCheckpoint(model_path, verbose=1, save_best_only=True),
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, min_lr=1e-7, verbose=1),

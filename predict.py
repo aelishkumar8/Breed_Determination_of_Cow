@@ -11,6 +11,7 @@ from keras.utils import CustomObjectScope
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score
 from metrics import dice_loss, dice_coef, iou
 from train import load_data, create_dir
+import bounding_box
 
 H = 512
 W = 512
