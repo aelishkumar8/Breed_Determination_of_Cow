@@ -1,0 +1,41 @@
+# =============================================================================
+# Cow Breed Detection — Project Configuration
+# =============================================================================
+
+project:
+  name: "Cow Breed Detection"
+  version: "0.1.0"
+
+# --- Data -------------------------------------------------------------------
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  image_size: [224, 224]
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  batch_size: 32
+  num_workers: 4
+
+# --- Model ------------------------------------------------------------------
+model:
+  architecture: "resnet50"       # resnet18, resnet50, efficientnet_b0, etc.
+  pretrained: true
+  num_classes: 10                # update based on your dataset
+  dropout: 0.5
+
+# --- Training ---------------------------------------------------------------
+training:
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam"              # adam, sgd, adamw
+  scheduler: "cosine"           # cosine, step, none
+  early_stopping_patience: 10
+  save_best_model: true
+
+# --- Paths ------------------------------------------------------------------
+paths:
+  model_weights: "models/weights"
+  logs: "logs"
+  outputs: "outputs"

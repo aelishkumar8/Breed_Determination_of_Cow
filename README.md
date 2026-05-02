@@ -1,61 +1,93 @@
-# Breed Determination of Cow
+# 🐄 Breed Detection of Cow
 
-A machine learning project that helps identify and classify different breeds of cows using computer vision techniques.
+A machine learning and computer vision project that helps identify and classify different breeds of cows from images.
 
 ## Overview
 
-This project aims to develop a system that can accurately determine the breed of a cow from images. It uses deep learning and computer vision techniques to analyze cow images and classify them into their respective breeds.
+This project aims to develop an automated two-stage pipeline that can accurately determine the breed of a cow from images. It uses YOLOv8-seg for detecting and cleanly cropping the cow using Oriented Bounding Boxes (OBBs), and a separate deep learning model to classify the cropped image into its respective breed.
 
 ## Features
 
 - Image-based cow breed classification
+- Instance segmentation and cropping using YOLOv8-seg
 - Support for multiple common cow breeds
-- Real-time prediction capabilities
-- User-friendly interface
-- High accuracy in breed determination
-
-## Prerequisites
-
-- Python 3.8 or higher
-- OpenCV
-- TensorFlow or PyTorch
-- NumPy
-- Matplotlib
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/Breed_Determination_of_Cow.git
-cd Breed_Determination_of_Cow
-```
-
-2. Install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-1. Prepare your cow images in the appropriate format
-2. Run the prediction script:
-```bash
-python predict.py --image path/to/your/image.jpg
-```
+- High accuracy in breed determination by minimizing background noise
 
 ## Project Structure
 
 ```
-Breed_Determination_of_Cow/
-├── data/               # Dataset and training data
-├── models/            # Trained models
-├── src/               # Source code
-│   ├── preprocessing/ # Image preprocessing utilities
-│   ├── training/     # Model training scripts
-│   └── prediction/   # Prediction scripts
-├── tests/            # Test files
-├── requirements.txt  # Project dependencies
-└── README.md        # Project documentation
+Breed detection of Cow/
+├── data/
+│   ├── raw/              # Original, unprocessed datasets
+│   └── processed/        # Cleaned and preprocessed data
+├── models/
+│   ├── weights/          # Saved model weights / checkpoints
+│   └── architectures/    # Model architecture definitions
+├── notebooks/            # Jupyter notebooks for exploration & experiments
+├── src/
+│   ├── __init__.py
+│   ├── data/             # Data loading & preprocessing utilities
+│   │   ├── __init__.py
+│   │   └── dataset.py
+│   ├── models/           # Model definitions
+│   │   ├── __init__.py
+│   │   └── classifier.py
+│   ├── training/         # Training loop & utilities
+│   │   ├── __init__.py
+│   │   └── trainer.py
+│   ├── evaluation/       # Evaluation metrics & scripts
+│   │   ├── __init__.py
+│   │   └── evaluate.py
+│   └── utils/            # General utility functions
+│       ├── __init__.py
+│       └── helpers.py
+├── config/
+│   └── config.yaml       # Project configuration
+├── tests/                # Unit tests
+│   └── __init__.py
+├── outputs/              # Training outputs, plots, results
+├── ghost.ai/             # AI Workflow and documentation files
+├── .gitignore
+├── requirements.txt
+├── setup.py
+└── README.md
+```
+
+## Getting Started
+
+### 1. Create & activate a virtual environment
+
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS/Linux
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Add your dataset
+
+Place your cow breed images in `data/raw/`, organized by breed:
+
+```
+data/raw/
+├── breed_1/
+│   ├── img_001.jpg
+│   └── ...
+├── breed_2/
+│   ├── img_001.jpg
+│   └── ...
+└── ...
+```
+
+### 4. Train the model
+
+```bash
+python -m src.training.trainer
 ```
 
 ## Contributing

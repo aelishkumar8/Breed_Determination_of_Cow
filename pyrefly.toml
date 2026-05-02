@@ -1,0 +1,8 @@
+python-version = "3.13"
+python-platform = "windows"
+
+# "." = project root, so `from src.data.dataset` resolves to ./src/data/dataset.py
+search-path = [
+    ".",
+    "C:\\Users\\AELISH\\anaconda3\\envs\\breed_detection_cow\\Lib\\site-packages",
+]
